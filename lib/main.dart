@@ -1,4 +1,5 @@
 import 'package:curheart/firebase_options.dart';
+import 'package:curheart/provider/curheart_provider.dart';
 import 'package:curheart/provider/user_provider.dart';
 import 'package:curheart/start/auth_state_page.dart';
 import 'package:curheart/utils/const_variables.dart';
@@ -25,6 +26,7 @@ void main() async {
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => UserProvider()),
+      ChangeNotifierProvider(create: (_) => CurheartProvider()),
     ],
     child: const MyApp(),
   ));

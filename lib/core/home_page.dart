@@ -2,7 +2,8 @@ import 'package:curheart/auth/login_page.dart';
 import 'package:curheart/helper/firebase_firestore_helper.dart';
 import 'package:curheart/helper/supabase_auth_helper.dart';
 import 'package:curheart/main.dart';
-import 'package:curheart/models/user_model.dart';
+import 'package:curheart/provider/curheart_provider.dart';
+import 'package:curheart/provider/curheart_provider.dart';
 import 'package:curheart/provider/user_provider.dart';
 import 'package:curheart/utils/custom_theme.dart';
 import 'package:curheart/utils/custom_widgets.dart';
@@ -19,6 +20,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late UserProvider userProvider;
+  late CurheartProvider curheartProvider;
+
   final currentUser = supabase.auth.currentUser!;
 
   final ScrollController scrollController = ScrollController();
@@ -28,27 +31,40 @@ class _HomePageState extends State<HomePage> {
     super.initState();
 
     userProvider = Provider.of<UserProvider>(context, listen: false);
+    curheartProvider = Provider.of<CurheartProvider>(context, listen: false);
   }
 
+  // ! Get current user and all curhearts
   Future<void> getData() async {
+    await Future.delayed(Duration(milliseconds: 500));
+
     if (userProvider.userModel == null) {
       await FirebaseFirestoreHelper.getUser(currentUser.id, userProvider);
     }
+
+    await FirebaseFirestoreHelper.getAllCurheart(curheartProvider);
   }
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context);
+    final curheartProvider = Provider.of<CurheartProvider>(context);
+
     return FutureBuilder(
       future: getData(),
       builder: (context, snapshot) {
+        // ? WAITING
         if (snapshot.connectionState == ConnectionState.waiting) {
           return FullScreenLoading();
         }
 
+        // ? SUCCESS
         return Scaffold(
           drawer: Drawer(),
           drawerEnableOpenDragGesture: true,
           drawerEdgeDragWidth: MediaQuery.sizeOf(context).width - 100,
+
+          // @ Refresher
           body: RefreshIndicator(
             onRefresh: () async {
               await Future.delayed(Duration(milliseconds: 500));
@@ -59,6 +75,7 @@ class _HomePageState extends State<HomePage> {
             child: CustomScrollView(
               controller: scrollController,
               slivers: [
+                // @ App Bar
                 SliverAppBar(
                   automaticallyImplyLeading: false,
                   title: Text("Curheart"),
@@ -98,32 +115,42 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
 
-                // @ List Curhatan untuk anda
-                SliverPadding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      childCount: 10,
-                      (context, index) {
-                        return Container(
-                          margin: EdgeInsets.only(bottom: 20),
-                          // child:
-                        );
-                      },
-                    ),
-                  ),
-                ),
+                // @ List Curheart
+                curheartProvider.allCurheart.isNotEmpty
+                    ? SliverPadding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        sliver: SliverList(
+                          delegate: SliverChildBuilderDelegate(
+                            childCount: curheartProvider.allCurheart.length,
+                            (context, index) {
+                              return Container(
+                                margin: EdgeInsets.only(bottom: 20),
+                                child: CureheartCard(
+                                  userModel: userProvider.userModel!,
+                                  curheartModel:
+                                      curheartProvider.allCurheart[index],
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      )
+                    : SliverToBoxAdapter(
+                        child: SizedBox(
+                          height: MediaQuery.sizeOf(context).height -
+                              kToolbarHeight,
+                          child: Center(
+                            child: Text("Belum ada curheart"),
+                          ),
+                        ),
+                      ),
               ],
             ),
           ),
           floatingActionButton: FloatingActionButton(
-            onPressed: () async {
-              try {
-                SupabaseAuthHelper.signOut();
-
-                Navigator.pushReplacement(context, CustomRoute(LoginPage()));
-              } catch (e) {}
-            },
+            tooltip: "Tambah curheart",
+            child: FaIcon(FontAwesomeIcons.pen),
+            onPressed: () {},
           ),
         );
       },
