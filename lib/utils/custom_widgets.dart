@@ -1,5 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first, must_be_immutable
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:curheart/models/curheart_model.dart';
+import 'package:curheart/models/user_model.dart';
 import 'package:flutter/material.dart';
 
 import 'package:curheart/utils/custom_theme.dart';
@@ -154,6 +156,76 @@ class MyTextField extends StatelessWidget {
       onTapOutside: (event) {
         FocusScope.of(context).unfocus();
       },
+    );
+  }
+}
+
+// ! Cureheart Card
+class CureheartCard extends StatelessWidget {
+  final UserModel userModel;
+  final CurheartModel curheartModel;
+
+  const CureheartCard({
+    super.key,
+    required this.userModel,
+    required this.curheartModel,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Ink(
+      decoration: BoxDecoration(
+        color: Color(curheartModel.color),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).brightness == Brightness.light
+                ? darkPrimary
+                : lightPrimary,
+            offset: Offset(7, 7),
+          ),
+        ],
+      ),
+      height: 250,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(20),
+        highlightColor: Colors.black.withOpacity(.5),
+        onTap: () {},
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: 10,
+            horizontal: 20,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SizedBox(
+                width: double.infinity,
+                child: Text(
+                  curheartModel.title,
+                  style: TextStyle(
+                    fontSize: 50,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircleAvatar(
+                    backgroundImage: NetworkImage(userModel.photoUrl),
+                  ),
+                  SizedBox(width: 10),
+                  Text(userModel.name),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

@@ -8,7 +8,7 @@ final Color dangerRed = Color(0XFFFD60335);
 
 final ThemeData lightTheme = ThemeData(
   useMaterial3: true,
-  fontFamily: GoogleFonts.poppins().fontFamily,
+  fontFamily: GoogleFonts.bahiana().fontFamily,
   colorScheme: ColorScheme.fromSeed(
     brightness: Brightness.light,
     seedColor: primaryColor,

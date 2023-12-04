@@ -7,7 +7,7 @@ class FirebaseFirestoreHelper {
 
   // ! Add New User
   static Future<void> addUser(UserModel userModel) async {
-    _firestore.collection("users").doc(userModel.userId).set(userModel.toMap());
+    _firestore.collection("users").doc(userModel.id).set(userModel.toMap());
   }
 
   // ! Get a User

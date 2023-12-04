@@ -47,7 +47,7 @@ class SupabaseAuthHelper {
       );
 
       await FirebaseFirestoreHelper.addUser(UserModel(
-        userId: authResponse.user!.id,
+        id: authResponse.user!.id,
         email: email,
         name: name,
         photoUrl: "",

@@ -46,6 +46,9 @@ class _HomePageState extends State<HomePage> {
         }
 
         return Scaffold(
+          drawer: Drawer(),
+          drawerEnableOpenDragGesture: true,
+          drawerEdgeDragWidth: MediaQuery.sizeOf(context).width - 100,
           body: RefreshIndicator(
             onRefresh: () async {
               await Future.delayed(Duration(milliseconds: 500));
@@ -57,53 +60,43 @@ class _HomePageState extends State<HomePage> {
               controller: scrollController,
               slivers: [
                 SliverAppBar(
-                  title: Text(
-                    "Selamat Pagi, \n${userProvider.userModel!.name.split(" ")[0]}",
-                    style: TextStyle(fontSize: 30),
-                  ),
-                  toolbarHeight: kToolbarHeight + 10,
+                  automaticallyImplyLeading: false,
+                  title: Text("Curheart"),
+                  floating: true,
+                  snap: true,
                   actions: [
-                    Container(
-                      height: 50,
-                      width: 50,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color:
-                              Theme.of(context).brightness == Brightness.light
-                                  ? darkPrimary
-                                  : lightPrimary,
-                        ),
-                        image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: NetworkImage(userProvider.userModel!.photoUrl),
+                    InkWell(
+                      onTap: () {
+                        try {
+                          scrollController.animateTo(
+                            0,
+                            duration: Duration(milliseconds: 500),
+                            curve: Curves.easeInOut,
+                          );
+                        } catch (e) {}
+                      },
+                      child: Container(
+                        height: 30,
+                        width: 30,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color:
+                                Theme.of(context).brightness == Brightness.light
+                                    ? darkPrimary
+                                    : lightPrimary,
+                          ),
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image:
+                                NetworkImage(userProvider.userModel!.photoUrl),
+                          ),
                         ),
                       ),
                     ),
                     SizedBox(width: 10),
                   ],
                 ),
-
-                SliverAppBar(
-                  title: Text("Curhatan untuk anda"),
-                  floating: true,
-                  snap: true,
-                  actions: [
-                    IconButton(
-                      onPressed: () {
-                        try {
-                          scrollController.animateTo(
-                            0,
-                            duration: Duration(milliseconds: 250),
-                            curve: Curves.easeOut,
-                          );
-                        } catch (e) {}
-                      },
-                      icon: FaIcon(FontAwesomeIcons.angleUp),
-                    ),
-                  ],
-                ),
-                SliverToBoxAdapter(child: SizedBox(height: 10)),
 
                 // @ List Curhatan untuk anda
                 SliverPadding(
@@ -114,63 +107,7 @@ class _HomePageState extends State<HomePage> {
                       (context, index) {
                         return Container(
                           margin: EdgeInsets.only(bottom: 20),
-                          child: Ink(
-                            decoration: BoxDecoration(
-                              color: dangerRed,
-                              borderRadius: BorderRadius.circular(20),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Theme.of(context).brightness ==
-                                          Brightness.light
-                                      ? darkPrimary
-                                      : primaryColor,
-                                  offset: Offset(5, 5),
-                                ),
-                              ],
-                            ),
-                            height: 250,
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(20),
-                              highlightColor: Colors.black.withOpacity(.5),
-                              onTap: () {},
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 10,
-                                  horizontal: 20,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    SizedBox(
-                                      width: double.infinity,
-                                      child: Text(
-                                        "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit",
-                                        style: TextStyle(
-                                          fontSize: 50,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                        maxLines: 3,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                    Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        CircleAvatar(
-                                          backgroundImage: NetworkImage(
-                                              userProvider.userModel!.photoUrl),
-                                        ),
-                                        SizedBox(width: 10),
-                                        Text(userProvider.userModel!.name),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
+                          // child:
                         );
                       },
                     ),
