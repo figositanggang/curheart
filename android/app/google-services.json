@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "537558424354",
+    "project_id": "curheart-80624",
+    "storage_bucket": "curheart-80624.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:537558424354:android:aa65525a3e8b7fc5fce37b",
+        "android_client_info": {
+          "package_name": "com.example.curheart"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCyi0LPLkNewKsD0QWSKYkaVz__rx21YtI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
