@@ -14,4 +14,12 @@ class CurheartProvider extends ChangeNotifier {
     this._allCurheart = value;
     notifyListeners();
   }
+
+  TextEditingController _isiCurheart = TextEditingController();
+  TextEditingController get isiCurheart => this._isiCurheart;
+
+  set setIsiCurheart(String value) {
+    this._isiCurheart.text = value;
+    notifyListeners();
+  }
 }

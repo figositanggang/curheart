@@ -6,8 +6,9 @@ import 'package:flutter/material.dart';
 
 import 'package:curheart/utils/custom_theme.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-// ! Full Screen Loading
+// @ Full Screen Loading
 class FullScreenLoading extends StatelessWidget {
   String? text;
 
@@ -34,17 +35,19 @@ class FullScreenLoading extends StatelessWidget {
   }
 }
 
-// ! Primary Button
+// @ Primary Button
 class PrimaryButton extends StatelessWidget {
   final String text;
   final void Function() onPressed;
   EdgeInsetsGeometry? padding;
+  BorderRadius? borderRadius = BorderRadius.circular(50);
 
   PrimaryButton({
     Key? key,
     required this.text,
     required this.onPressed,
     this.padding,
+    this.borderRadius,
   }) : super(key: key);
 
   @override
@@ -52,7 +55,7 @@ class PrimaryButton extends StatelessWidget {
     return Ink(
       decoration: BoxDecoration(
         color: lightPrimary,
-        borderRadius: BorderRadius.circular(50),
+        borderRadius: borderRadius,
         boxShadow: [
           BoxShadow(
             color: darkPrimary,
@@ -61,7 +64,7 @@ class PrimaryButton extends StatelessWidget {
         ],
       ),
       child: InkWell(
-        borderRadius: BorderRadius.circular(50),
+        borderRadius: borderRadius,
         onTap: onPressed,
         highlightColor: darkPrimary,
         child: Padding(
@@ -82,7 +85,7 @@ class PrimaryButton extends StatelessWidget {
   }
 }
 
-// ! Custom Text
+// @ Custom Text
 class MyText extends StatelessWidget {
   final String text;
   double? fontSize;
@@ -110,11 +113,11 @@ class MyText extends StatelessWidget {
   }
 }
 
-// ! Custom TextFormField
+// @ Custom TextFormField
 class MyTextField extends StatelessWidget {
   final TextEditingController controller;
   final String label;
-  String? Function(String?)? validator;
+  String? Function(String? value)? validator;
   List<TextInputFormatter>? inputFormatters;
   Iterable<String>? autofillHints;
   EdgeInsetsGeometry? contentPadding = EdgeInsets.symmetric(
@@ -124,6 +127,12 @@ class MyTextField extends StatelessWidget {
   bool obscureText;
   Widget? suffixIcon;
   TextInputType? keyboardType;
+  Color? labelColor;
+  Color? valueColor;
+  int? maxLines = 1;
+  InputBorder? focusedBorder;
+  InputBorder? enabledBorder;
+  void Function(String value)? onChanged;
 
   MyTextField({
     super.key,
@@ -136,11 +145,18 @@ class MyTextField extends StatelessWidget {
     this.suffixIcon,
     this.keyboardType,
     this.obscureText = false,
+    this.labelColor,
+    this.valueColor,
+    this.maxLines,
+    this.focusedBorder,
+    this.enabledBorder,
+    this.onChanged,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      maxLines: maxLines,
       controller: controller,
       keyboardType: keyboardType,
       autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -148,19 +164,28 @@ class MyTextField extends StatelessWidget {
       autofillHints: autofillHints,
       inputFormatters: inputFormatters,
       obscureText: obscureText,
+      style: TextStyle(
+        color: valueColor,
+      ),
       decoration: InputDecoration(
+        enabledBorder: enabledBorder,
+        focusedBorder: focusedBorder,
         labelText: label,
         contentPadding: contentPadding,
         suffixIcon: suffixIcon,
+        labelStyle: TextStyle(
+          color: labelColor,
+        ),
       ),
       onTapOutside: (event) {
         FocusScope.of(context).unfocus();
       },
+      onChanged: onChanged,
     );
   }
 }
 
-// ! Cureheart Card
+// @ Cureheart Card
 class CureheartCard extends StatelessWidget {
   final UserModel userModel;
   final CurheartModel curheartModel;
@@ -230,7 +255,44 @@ class CureheartCard extends StatelessWidget {
   }
 }
 
-// ! Custom SnackBar
+// ------------------------------------
+// ! Non StatelesWidget
+
+// @ MyAppBar
+AppBar MyAppBar(
+  BuildContext context, {
+  Widget? title,
+  Color? backgroundColor,
+  Color? foregroundColor,
+  void Function()? onPressed,
+}) {
+  return AppBar(
+    automaticallyImplyLeading: false,
+    title: title,
+    backgroundColor: backgroundColor,
+    foregroundColor: foregroundColor,
+    actions: [
+      IconButton(
+        onPressed: onPressed ??
+            () {
+              Navigator.pop(context);
+            },
+        icon: FaIcon(
+          FontAwesomeIcons.xmark,
+          size: 17,
+        ),
+        constraints: BoxConstraints(minWidth: 35, minHeight: 35),
+        style: ElevatedButton.styleFrom(
+          foregroundColor: directColor(context),
+          backgroundColor: reversedColor(context),
+        ),
+      ),
+      SizedBox(width: 10),
+    ],
+  );
+}
+
+// @ Custom SnackBar
 SnackBar MySnackBar({required String content}) {
   return SnackBar(
     backgroundColor: dangerRed,
@@ -243,7 +305,7 @@ SnackBar MySnackBar({required String content}) {
   );
 }
 
-// ! Custom Route
+// @ Custom Route
 Route CustomRoute(Widget page) {
   return PageRouteBuilder(
     transitionDuration: Duration(milliseconds: 100),

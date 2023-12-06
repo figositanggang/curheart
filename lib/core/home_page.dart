@@ -1,8 +1,6 @@
-import 'package:curheart/auth/login_page.dart';
+import 'package:curheart/core/add_curheart.dart';
 import 'package:curheart/helper/firebase_firestore_helper.dart';
-import 'package:curheart/helper/supabase_auth_helper.dart';
 import 'package:curheart/main.dart';
-import 'package:curheart/provider/curheart_provider.dart';
 import 'package:curheart/provider/curheart_provider.dart';
 import 'package:curheart/provider/user_provider.dart';
 import 'package:curheart/utils/custom_theme.dart';
@@ -45,6 +43,13 @@ class _HomePageState extends State<HomePage> {
     await FirebaseFirestoreHelper.getAllCurheart(curheartProvider);
   }
 
+  // ! Refresh Screen
+  Future<void> refresh() async {
+    getData();
+
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
@@ -66,12 +71,7 @@ class _HomePageState extends State<HomePage> {
 
           // @ Refresher
           body: RefreshIndicator(
-            onRefresh: () async {
-              await Future.delayed(Duration(milliseconds: 500));
-
-              getData();
-              setState(() {});
-            },
+            onRefresh: refresh,
             child: CustomScrollView(
               controller: scrollController,
               slivers: [
@@ -149,8 +149,18 @@ class _HomePageState extends State<HomePage> {
           ),
           floatingActionButton: FloatingActionButton(
             tooltip: "Tambah curheart",
-            child: FaIcon(FontAwesomeIcons.pen),
-            onPressed: () {},
+            child: FaIcon(
+              FontAwesomeIcons.pen,
+              size: 15,
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                CustomRoute(AddCurheart(
+                  userModel: userProvider.userModel!,
+                )),
+              );
+            },
           ),
         );
       },
