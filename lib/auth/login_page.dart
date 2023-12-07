@@ -134,7 +134,7 @@ class _LoginPageState extends State<LoginPage> {
                         // @ Login Button
                         SizedBox(
                           width: double.infinity,
-                          child: PrimaryButton(
+                          child: MyButton(
                             onPressed: () {
                               if (!formKey.currentState!.validate()) {
                                 ScaffoldMessenger.of(context).showSnackBar(

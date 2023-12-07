@@ -34,7 +34,7 @@ class _WelcomePageState extends State<WelcomePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              PrimaryButton(
+              MyButton(
                 text: "Mulai",
                 onPressed: () {
                   Navigator.pushAndRemoveUntil(

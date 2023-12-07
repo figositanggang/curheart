@@ -36,33 +36,37 @@ class FullScreenLoading extends StatelessWidget {
 }
 
 // @ Primary Button
-class PrimaryButton extends StatelessWidget {
+class MyButton extends StatelessWidget {
   final String text;
+  final bool isPrimary;
   final void Function() onPressed;
   EdgeInsetsGeometry? padding;
   BorderRadius? borderRadius = BorderRadius.circular(50);
 
-  PrimaryButton({
+  MyButton({
     Key? key,
     required this.text,
     required this.onPressed,
     this.padding,
     this.borderRadius,
+    this.isPrimary = true,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Ink(
-      decoration: BoxDecoration(
-        color: lightPrimary,
-        borderRadius: borderRadius,
-        boxShadow: [
-          BoxShadow(
-            color: darkPrimary,
-            offset: Offset(5, 6),
-          ),
-        ],
-      ),
+      decoration: isPrimary
+          ? BoxDecoration(
+              color: lightPrimary,
+              borderRadius: borderRadius,
+              boxShadow: [
+                BoxShadow(
+                  color: darkPrimary,
+                  offset: Offset(5, 6),
+                ),
+              ],
+            )
+          : null,
       child: InkWell(
         borderRadius: borderRadius,
         onTap: onPressed,
@@ -73,9 +77,9 @@ class PrimaryButton extends StatelessWidget {
             child: Text(
               text,
               style: TextStyle(
-                color: Colors.black,
+                color: isPrimary ? Colors.black : primaryColor,
                 fontSize: 20,
-                fontWeight: FontWeight.bold,
+                fontWeight: isPrimary ? FontWeight.bold : FontWeight.normal,
               ),
             ),
           ),
@@ -255,6 +259,34 @@ class CureheartCard extends StatelessWidget {
   }
 }
 
+// @ Alert Dialog
+class MyDialog extends StatelessWidget {
+  final void Function() onYes;
+
+  const MyDialog({super.key, required this.onYes});
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Center(child: Text("Batal ?")),
+      actions: [
+        SizedBox(height: 20),
+        MyButton(
+          text: "Ya",
+          onPressed: onYes,
+        ),
+        SizedBox(height: 10),
+        MyButton(
+          text: "Tidak",
+          isPrimary: false,
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    );
+  }
+}
 // ------------------------------------
 // ! Non StatelesWidget
 
