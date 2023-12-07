@@ -3,16 +3,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class CurheartModel {
   final String id;
   final String createdBy;
+  final String type;
   final String title;
+  final String isiCurheart;
   final int color;
-  final List<String> curheart;
   final Timestamp createdAt;
 
   CurheartModel({
     required this.id,
     required this.createdBy,
+    required this.type,
     required this.title,
-    required this.curheart,
+    required this.isiCurheart,
     required this.color,
     required this.createdAt,
   });
@@ -21,9 +23,10 @@ class CurheartModel {
     return {
       "id": this.id,
       "createdBy": this.createdBy,
+      "type": this.type,
       "title": this.title,
       "color": this.color,
-      "curheart": this.curheart,
+      "isiCurheart": this.isiCurheart,
       "createdAt": this.createdAt,
     };
   }
@@ -34,9 +37,10 @@ class CurheartModel {
     return CurheartModel(
       id: json["id"],
       createdBy: json["createdBy"],
+      type: json["type"],
       title: json["title"],
       color: json["color"],
-      curheart: json["curheart"],
+      isiCurheart: json["isiCurheart"],
       createdAt: json["createdAt"],
     );
   }

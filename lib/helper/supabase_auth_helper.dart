@@ -51,6 +51,7 @@ class SupabaseAuthHelper {
         email: email,
         name: name,
         photoUrl: "",
+        curhearts: [],
       ));
 
       return "success";

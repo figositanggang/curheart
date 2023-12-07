@@ -44,7 +44,7 @@ final ThemeData lightTheme = ThemeData(
   colorScheme: ColorScheme.fromSeed(
     brightness: Brightness.light,
     seedColor: primaryColor,
-  ),
+  ).copyWith(error: Colors.red),
 );
 
 final ThemeData darkTheme = ThemeData(
@@ -53,5 +53,5 @@ final ThemeData darkTheme = ThemeData(
   colorScheme: ColorScheme.fromSeed(
     brightness: Brightness.dark,
     seedColor: primaryColor,
-  ),
+  ).copyWith(error: Colors.red),
 );

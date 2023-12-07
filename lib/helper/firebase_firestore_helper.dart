@@ -45,5 +45,17 @@ class FirebaseFirestoreHelper {
       print("ERROR GETTING ALL CURHEARTS: $e");
     }
   }
+
+  // ! Post a Curheart
+  static Future postCurheart(CurheartModel curheartModel) async {
+    try {
+      DocumentReference reference =
+          await _firestore.collection("curhearts").add(curheartModel.toMap());
+
+      return "success";
+    } catch (e) {
+      return "error";
+    }
+  }
   //---------------------------------------------------------------------------
 }

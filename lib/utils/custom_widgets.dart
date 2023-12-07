@@ -1,12 +1,12 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first, must_be_immutable
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:curheart/models/curheart_model.dart';
-import 'package:curheart/models/user_model.dart';
 import 'package:flutter/material.dart';
-
-import 'package:curheart/utils/custom_theme.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+import 'package:curheart/models/curheart_model.dart';
+import 'package:curheart/models/user_model.dart';
+import 'package:curheart/utils/custom_theme.dart';
 
 // @ Full Screen Loading
 class FullScreenLoading extends StatelessWidget {
@@ -137,6 +137,7 @@ class MyTextField extends StatelessWidget {
   InputBorder? focusedBorder;
   InputBorder? enabledBorder;
   void Function(String value)? onChanged;
+  String? counterText;
 
   MyTextField({
     super.key,
@@ -155,6 +156,7 @@ class MyTextField extends StatelessWidget {
     this.focusedBorder,
     this.enabledBorder,
     this.onChanged,
+    this.counterText,
   });
 
   @override
@@ -164,7 +166,13 @@ class MyTextField extends StatelessWidget {
       controller: controller,
       keyboardType: keyboardType,
       autovalidateMode: AutovalidateMode.onUserInteraction,
-      validator: validator,
+      validator: validator ??
+          (value) {
+            if (value!.isEmpty) {
+              return "Masih kosong...";
+            }
+            return null;
+          },
       autofillHints: autofillHints,
       inputFormatters: inputFormatters,
       obscureText: obscureText,
@@ -172,6 +180,8 @@ class MyTextField extends StatelessWidget {
         color: valueColor,
       ),
       decoration: InputDecoration(
+        counterText: counterText,
+        counterStyle: TextStyle(color: directColor(context).withOpacity(.5)),
         enabledBorder: enabledBorder,
         focusedBorder: focusedBorder,
         labelText: label,
@@ -287,6 +297,70 @@ class MyDialog extends StatelessWidget {
     );
   }
 }
+
+// @ Custom Container
+class MyContainer extends StatelessWidget {
+  final Widget child;
+
+  EdgeInsetsGeometry? padding;
+  EdgeInsetsGeometry? margin;
+  Color? bgColor;
+
+  MyContainer({
+    Key? key,
+    required this.child,
+    this.padding,
+    this.margin,
+    this.bgColor,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: padding,
+      margin: margin,
+      decoration: BoxDecoration(
+        color: bgColor ?? reversedColor(context),
+        boxShadow: [
+          BoxShadow(
+            color: reversedPrimary(context),
+            offset: Offset(5, 6),
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
+}
+
+// @ Choice Chip
+class MyChip extends StatelessWidget {
+  final Widget label;
+  final bool selected;
+  final void Function(bool value) onSelected;
+
+  const MyChip({
+    super.key,
+    required this.label,
+    required this.selected,
+    required this.onSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(right: 10),
+      child: ChoiceChip(
+        showCheckmark: false,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+        label: label,
+        selected: selected,
+        onSelected: onSelected,
+      ),
+    );
+  }
+}
+
 // ------------------------------------
 // ! Non StatelesWidget
 

@@ -5,12 +5,14 @@ class UserModel {
   final String email;
   final String name;
   final String photoUrl;
+  final List curhearts;
 
   UserModel({
     required this.id,
     required this.email,
     required this.name,
     required this.photoUrl,
+    required this.curhearts,
   });
 
   Map<String, dynamic> toMap() {
@@ -19,6 +21,7 @@ class UserModel {
       "email": this.email,
       "name": this.name,
       "photoUrl": this.photoUrl,
+      "curhearts": this.curhearts,
     };
   }
 
@@ -30,6 +33,7 @@ class UserModel {
       email: json["email"],
       name: json["name"],
       photoUrl: json["photoUrl"],
+      curhearts: json["curhearts"],
     );
   }
 }

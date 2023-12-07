@@ -1,5 +1,9 @@
+import 'package:curheart/helper/firebase_firestore_helper.dart';
+import 'package:curheart/models/curheart_model.dart';
 import 'package:curheart/models/user_model.dart';
 import 'package:curheart/provider/curheart_provider.dart';
+import 'package:curheart/utils/const_variables.dart';
+import 'package:curheart/utils/custom_methods.dart';
 import 'package:curheart/utils/custom_theme.dart';
 import 'package:curheart/utils/custom_widgets.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +22,8 @@ class _AddCurheartState extends State<AddCurheart> {
 
   late TextEditingController titleCurheart;
   late CurheartProvider curheartProvider;
-  // late TextEditingController isiCurheart;
+
+  int? selectedChip;
 
   @override
   void initState() {
@@ -26,7 +31,11 @@ class _AddCurheartState extends State<AddCurheart> {
     curheartProvider = Provider.of<CurheartProvider>(context, listen: false);
 
     titleCurheart = TextEditingController();
-    // isiCurheart = TextEditingController();
+  }
+
+  // ! Post a Curheart
+  void postCurheart(CurheartModel curheartModel) async {
+    String res = await FirebaseFirestoreHelper.postCurheart(curheartModel);
   }
 
   @override
@@ -40,6 +49,7 @@ class _AddCurheartState extends State<AddCurheart> {
           builder: (context) => MyDialog(
             onYes: () {
               pop = true;
+              curheartProvider.isiCurheart.text = "";
 
               Navigator.pop(context);
             },
@@ -49,6 +59,7 @@ class _AddCurheartState extends State<AddCurheart> {
         return pop;
       },
       child: Scaffold(
+        // @ App Bar
         appBar: MyAppBar(
           context,
           title: Text("Tambah curheart"),
@@ -57,6 +68,8 @@ class _AddCurheartState extends State<AddCurheart> {
               context: context,
               builder: (context) => MyDialog(
                 onYes: () {
+                  curheartProvider.isiCurheart.text = "";
+
                   Navigator.pop(context);
                   Navigator.pop(context);
                 },
@@ -67,82 +80,136 @@ class _AddCurheartState extends State<AddCurheart> {
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: SingleChildScrollView(
-            child: Form(
-              key: formKey,
-              child: Column(
-                children: [
-                  SizedBox(height: 20),
+            child: Container(
+              margin: EdgeInsets.only(bottom: kBottomNavigationBarHeight + 20),
+              child: Form(
+                key: formKey,
+                child: Column(
+                  children: [
+                    SizedBox(height: 20),
 
-                  // @ Title Curheart
-                  Container(
-                    decoration: BoxDecoration(
-                      color: reversedColor(context),
-                      boxShadow: [
-                        BoxShadow(
-                          color: reversedPrimary(context),
-                          offset: Offset(5, 5),
-                        ),
-                      ],
+                    // @ Title Curheart
+                    Container(
+                      padding: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: reversedColor(context),
+                        boxShadow: [
+                          BoxShadow(
+                            color: reversedPrimary(context),
+                            offset: Offset(5, 5),
+                          ),
+                        ],
+                      ),
+                      child: MyTextField(
+                        controller: titleCurheart,
+                        label: "Judul cuheart",
+                        labelColor: directColor(context),
+                        valueColor: directColor(context),
+                        contentPadding: EdgeInsets.all(10),
+                      ),
                     ),
-                    child: MyTextField(
-                      controller: titleCurheart,
-                      label: "Judul cuheart",
-                      labelColor: directColor(context),
-                      valueColor: directColor(context),
-                      contentPadding: EdgeInsets.all(10),
-                    ),
-                  ),
-                  SizedBox(height: 20),
+                    SizedBox(height: 20),
 
-                  // @ Isi Curheart
-                  Container(
-                    padding: EdgeInsets.all(20),
-                    constraints: BoxConstraints(
-                        minHeight: MediaQuery.sizeOf(context).height / 2),
-                    decoration: BoxDecoration(
-                      color: reversedColor(context),
-                      boxShadow: [
-                        BoxShadow(
-                          color: reversedPrimary(context),
-                          offset: Offset(5, 5),
-                        ),
-                      ],
+                    // @ Isi Curheart
+                    Container(
+                      padding: EdgeInsets.all(20),
+                      constraints: BoxConstraints(
+                          minHeight: MediaQuery.sizeOf(context).height / 2),
+                      decoration: BoxDecoration(
+                        color: reversedColor(context),
+                        boxShadow: [
+                          BoxShadow(
+                            color: reversedPrimary(context),
+                            offset: Offset(5, 5),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Isi Curheart",
+                                style: TextStyle(color: directColor(context)),
+                              ),
+                              Text(
+                                "Kata: ${RegExp(r"[\w-]+").allMatches(context.watch<CurheartProvider>().isiCurheart.text).length}",
+                                style: TextStyle(color: directColor(context)),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 20),
+
+                          // @ TextField Isi Curheart
+                          MyTextField(
+                            controller: curheartProvider.isiCurheart,
+                            label: "",
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return "Masih kosong...";
+                              }
+                              if (RegExp(r"[\w-]+")
+                                      .allMatches(context
+                                          .read<CurheartProvider>()
+                                          .isiCurheart
+                                          .text)
+                                      .length <
+                                  20) {
+                                return "Minimal 20 kata...";
+                              }
+
+                              return null;
+                            },
+                            counterText: "Minimal 20 kata",
+                            labelColor: directColor(context),
+                            valueColor: directColor(context),
+                            contentPadding: EdgeInsets.all(10),
+                            maxLines: null,
+                            enabledBorder: OutlineInputBorder(),
+                            focusedBorder: OutlineInputBorder(),
+                            onChanged: (value) {
+                              curheartProvider.setIsiCurheart = value;
+                            },
+                          ),
+                        ],
+                      ),
                     ),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Isi Curheart",
-                              style: TextStyle(color: directColor(context)),
+                    SizedBox(height: 20),
+
+                    // @ Emoji
+                    MyContainer(
+                      padding: EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Emoji",
+                            style: TextStyle(color: directColor(context)),
+                          ),
+                          SizedBox(height: 10),
+                          Row(
+                            children: List.generate(
+                              emoji.length,
+                              (index) => MyChip(
+                                label: Text(
+                                  emoji[index],
+                                  style: TextStyle(fontSize: 40),
+                                ),
+                                selected: selectedChip == index,
+                                onSelected: (value) {
+                                  setState(() {
+                                    selectedChip = index;
+                                  });
+                                },
+                              ),
                             ),
-                            Text(
-                              "Kata: ${RegExp(r"[\w-]+").allMatches(context.watch<CurheartProvider>().isiCurheart.text).length}",
-                              style: TextStyle(color: directColor(context)),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 20),
-
-                        // @ TextField Isi Curheart
-                        MyTextField(
-                          controller: curheartProvider.isiCurheart,
-                          label: "",
-                          labelColor: directColor(context),
-                          valueColor: directColor(context),
-                          contentPadding: EdgeInsets.all(10),
-                          maxLines: null,
-                          enabledBorder: OutlineInputBorder(),
-                          focusedBorder: OutlineInputBorder(),
-                          onChanged: (value) {
-                            curheartProvider.setIsiCurheart = value;
-                          },
-                        ),
-                      ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -155,7 +222,15 @@ class _AddCurheartState extends State<AddCurheart> {
             text: "Post",
             borderRadius: BorderRadius.zero,
             onPressed: () {
-              if (formKey.currentState!.validate()) {}
+              if (!formKey.currentState!.validate()) {
+                return;
+              } else if (selectedChip == null) {
+                showSnackBar(
+                    context, MySnackBar(content: "Emoji belum dipilih"));
+                return;
+              }
+
+              postCurheart(curheartModel);
             },
           ),
         ),
