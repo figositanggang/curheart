@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:curheart/models/curheart_model.dart';
 import 'package:curheart/models/user_model.dart';
-import 'package:curheart/provider/curheart_provider.dart';
-import 'package:curheart/provider/user_provider.dart';
 
 class FirebaseFirestoreHelper {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
