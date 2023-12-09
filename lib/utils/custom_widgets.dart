@@ -213,59 +213,65 @@ class CureheartCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Ink(
-      decoration: BoxDecoration(
-        color: Color(curheartModel.color),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Theme.of(context).brightness == Brightness.light
-                ? darkPrimary
-                : lightPrimary,
-            offset: Offset(7, 7),
-          ),
-        ],
-      ),
-      height: 250,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(20),
-        highlightColor: Colors.black.withOpacity(.5),
-        onTap: () {
-          Navigator.push(context,
-              CustomRoute(CureheartDetailScreen(curheartModel: curheartModel)));
-        },
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            vertical: 10,
-            horizontal: 20,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              SizedBox(
-                width: double.infinity,
-                child: Text(
-                  curheartModel.title,
-                  style: TextStyle(
-                    fontSize: 50,
-                    fontWeight: FontWeight.bold,
+    return Container(
+      margin: EdgeInsets.only(bottom: 40),
+      child: Ink(
+        decoration: BoxDecoration(
+          color: Color(curheartModel.color),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: reversedPrimary(context),
+              offset: Offset(7, 7),
+            ),
+          ],
+        ),
+        height: 250,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(20),
+          highlightColor: Colors.black.withOpacity(.5),
+          onTap: () {
+            Navigator.push(
+                context,
+                CustomRoute(
+                    CureheartDetailScreen(curheartModel: curheartModel)));
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              vertical: 10,
+              horizontal: 20,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  child: Text(
+                    curheartModel.title,
+                    style: TextStyle(
+                      fontSize: 50,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CircleAvatar(
-                    backgroundImage: NetworkImage(userModel.photoUrl),
-                  ),
-                  SizedBox(width: 10),
-                  Text(userModel.name),
-                ],
-              ),
-            ],
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CircleAvatar(
+                      backgroundImage: NetworkImage(userModel.photoUrl),
+                    ),
+                    SizedBox(width: 10),
+                    Text(
+                      userModel.name,
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

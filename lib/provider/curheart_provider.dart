@@ -8,4 +8,22 @@ class CurheartProvider extends ChangeNotifier {
     this._isiCurheart.text = value;
     notifyListeners();
   }
+
+  double _fontSize = 18;
+  double get fontSize => this._fontSize;
+
+  addFontSize(double value) {
+    this._fontSize += value;
+    notifyListeners();
+  }
+
+  minFontSize(double value) {
+    this._fontSize -= value;
+    notifyListeners();
+  }
+
+  set fontSize(double value) {
+    this._fontSize = value;
+    notifyListeners();
+  }
 }
