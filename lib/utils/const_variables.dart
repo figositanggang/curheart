@@ -9,7 +9,16 @@ final RegExp regExpPassword =
 final RegExp regExpName = RegExp('[a-zA-Z]');
 
 // Emoji
-List<String> emoji = ["😁", "😔"];
+List<Map<String, dynamic>> emoji = [
+  {
+    "type": "Senang",
+    "emoji": "😁",
+  },
+  {
+    "type": "Sedih",
+    "emoji": "😔",
+  },
+];
 
 // ------------------------------------------------------------
 // ----

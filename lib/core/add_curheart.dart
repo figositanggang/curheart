@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:curheart/helper/firebase_firestore_helper.dart';
+import 'package:curheart/main.dart';
 import 'package:curheart/models/curheart_model.dart';
 import 'package:curheart/models/user_model.dart';
 import 'package:curheart/provider/curheart_provider.dart';
@@ -19,6 +21,7 @@ class AddCurheart extends StatefulWidget {
 
 class _AddCurheartState extends State<AddCurheart> {
   final formKey = GlobalKey<FormState>();
+  final currentUser = supabase.auth.currentUser!;
 
   late TextEditingController titleCurheart;
   late CurheartProvider curheartProvider;
@@ -35,8 +38,24 @@ class _AddCurheartState extends State<AddCurheart> {
 
   // ! Post a Curheart
   void postCurheart(CurheartModel curheartModel) async {
+    showDialog(
+        context: context,
+        builder: (context) => FullScreenLoading(
+              text: "Posting curheart...",
+            ));
     String res = await FirebaseFirestoreHelper.postCurheart(curheartModel);
+
+    if (res == "success") {
+      Navigator.pop(context);
+      Navigator.pop(context);
+    } else {
+      Navigator.pop(context);
+    }
+
+    print(res);
   }
+
+  Future<void> aw() async {}
 
   @override
   Widget build(BuildContext context) {
@@ -193,7 +212,7 @@ class _AddCurheartState extends State<AddCurheart> {
                               emoji.length,
                               (index) => MyChip(
                                 label: Text(
-                                  emoji[index],
+                                  emoji[index]["emoji"],
                                   style: TextStyle(fontSize: 40),
                                 ),
                                 selected: selectedChip == index,
@@ -230,7 +249,19 @@ class _AddCurheartState extends State<AddCurheart> {
                 return;
               }
 
-              postCurheart(curheartModel);
+              postCurheart(
+                CurheartModel(
+                  id: "",
+                  createdBy: currentUser.id,
+                  type: emoji[selectedChip!]["type"],
+                  title: titleCurheart.text.trim(),
+                  isiCurheart: curheartProvider.isiCurheart.text.trim(),
+                  color: emoji[selectedChip!]["type"] == "Senang"
+                      ? primaryColor.value
+                      : dangerRed.value,
+                  createdAt: Timestamp.fromDate(DateTime.now()),
+                ),
+              );
             },
           ),
         ),

@@ -153,6 +153,22 @@ packages:
       url: "https://pub-web.flutter-io.cn"
     source: hosted
     version: "2.9.0"
+  firebase_ui_firestore:
+    dependency: "direct main"
+    description:
+      name: firebase_ui_firestore
+      sha256: "783b0fe99fc739d68500b554b96e6ff83c35e1b8ef98cdb9275ee5fca0b5d555"
+      url: "https://pub-web.flutter-io.cn"
+    source: hosted
+    version: "1.5.15"
+  firebase_ui_localizations:
+    dependency: transitive
+    description:
+      name: firebase_ui_localizations
+      sha256: "3224f45191614bb67d95801689b31a3bb07d5581dfad20c815bf8317b088f003"
+      url: "https://pub-web.flutter-io.cn"
+    source: hosted
+    version: "1.9.0"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -166,6 +182,11 @@ packages:
       url: "https://pub-web.flutter-io.cn"
     source: hosted
     version: "2.0.3"
+  flutter_localizations:
+    dependency: transitive
+    description: flutter
+    source: sdk
+    version: "0.0.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -240,6 +261,14 @@ packages:
       url: "https://pub-web.flutter-io.cn"
     source: hosted
     version: "4.0.2"
+  intl:
+    dependency: transitive
+    description:
+      name: intl
+      sha256: "3bc132a9dbce73a7e4a21a17d06e1878839ffbf975568bc875c60537824b0c4d"
+      url: "https://pub-web.flutter-io.cn"
+    source: hosted
+    version: "0.18.1"
   js:
     dependency: transitive
     description:

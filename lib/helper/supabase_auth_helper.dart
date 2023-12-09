@@ -24,8 +24,7 @@ class SupabaseAuthHelper {
         password: password,
       );
 
-      await FirebaseFirestoreHelper.getUser(
-          authResponse.user!.id, userProvider);
+      await FirebaseFirestoreHelper.getUser(authResponse.user!.id);
 
       return "success";
     } catch (e) {

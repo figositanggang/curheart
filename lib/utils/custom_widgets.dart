@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first, must_be_immutable
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:curheart/core/curheart_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -229,7 +230,10 @@ class CureheartCard extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(20),
         highlightColor: Colors.black.withOpacity(.5),
-        onTap: () {},
+        onTap: () {
+          Navigator.push(context,
+              CustomRoute(CureheartDetailScreen(curheartModel: curheartModel)));
+        },
         child: Padding(
           padding: const EdgeInsets.symmetric(
             vertical: 10,
@@ -368,6 +372,7 @@ class MyChip extends StatelessWidget {
 AppBar MyAppBar(
   BuildContext context, {
   Widget? title,
+  Widget? leading,
   Color? backgroundColor,
   Color? foregroundColor,
   void Function()? onPressed,
@@ -375,6 +380,7 @@ AppBar MyAppBar(
   return AppBar(
     automaticallyImplyLeading: false,
     title: title,
+    leading: leading,
     backgroundColor: backgroundColor,
     foregroundColor: foregroundColor,
     actions: [

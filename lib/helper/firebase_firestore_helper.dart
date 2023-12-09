@@ -17,13 +17,9 @@ class FirebaseFirestoreHelper {
   }
 
   // ! Get a User
-  static Future<void> getUser(String userId, UserProvider userProvider) async {
-    try {
-      DocumentSnapshot snapshot =
-          await _firestore.collection("users").doc(userId).get();
-
-      userProvider.setUserModel = UserModel.fromJson(snapshot);
-    } catch (e) {}
+  static Future<DocumentSnapshot<Map<String, dynamic>>> getUser(
+      String userId) async {
+    return _firestore.collection("users").doc(userId).get();
   }
   //---------------------------------------------------------------------------
 
@@ -32,18 +28,10 @@ class FirebaseFirestoreHelper {
   //
 
   // ! Get All Curheart
-  static Future<void> getAllCurheart(CurheartProvider curheartProvider) async {
-    try {
-      QuerySnapshot snapshot = await _firestore.collection("curhearts").get();
-
-      for (var data in snapshot.docs) {
-        CurheartModel curheartModel = CurheartModel.fromSnapshot(data);
-
-        curheartProvider.addCurheart = curheartModel;
-      }
-    } on FirebaseException catch (e) {
-      print("ERROR GETTING ALL CURHEARTS: $e");
-    }
+  static Query<Map<String, dynamic>> getAllCurheart() {
+    return _firestore
+        .collection("curhearts")
+        .orderBy("createdAt", descending: true);
   }
 
   // ! Post a Curheart
@@ -52,6 +40,10 @@ class FirebaseFirestoreHelper {
       DocumentReference reference =
           await _firestore.collection("curhearts").add(curheartModel.toMap());
 
+      await _firestore
+          .collection("curhearts")
+          .doc(reference.id)
+          .update({"id": reference.id});
       return "success";
     } catch (e) {
       return "error";

@@ -1,13 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:curheart/core/add_curheart.dart';
 import 'package:curheart/helper/firebase_firestore_helper.dart';
 import 'package:curheart/main.dart';
-import 'package:curheart/provider/curheart_provider.dart';
-import 'package:curheart/provider/user_provider.dart';
+import 'package:curheart/models/curheart_model.dart';
+import 'package:curheart/models/user_model.dart';
 import 'package:curheart/utils/custom_theme.dart';
 import 'package:curheart/utils/custom_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:provider/provider.dart';
+import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,8 +18,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late UserProvider userProvider;
-  late CurheartProvider curheartProvider;
+  late Future<DocumentSnapshot<Map<String, dynamic>>> getuser;
+  late Query<Map<String, dynamic>> getAllCurheart;
 
   final currentUser = supabase.auth.currentUser!;
 
@@ -28,19 +29,13 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    userProvider = Provider.of<UserProvider>(context, listen: false);
-    curheartProvider = Provider.of<CurheartProvider>(context, listen: false);
+    getData();
   }
 
   // ! Get current user and all curhearts
   Future<void> getData() async {
-    await Future.delayed(Duration(milliseconds: 500));
-
-    if (userProvider.userModel == null) {
-      await FirebaseFirestoreHelper.getUser(currentUser.id, userProvider);
-    }
-
-    await FirebaseFirestoreHelper.getAllCurheart(curheartProvider);
+    getuser = FirebaseFirestoreHelper.getUser(currentUser.id);
+    getAllCurheart = FirebaseFirestoreHelper.getAllCurheart();
   }
 
   // ! Refresh Screen
@@ -52,17 +47,15 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final userProvider = Provider.of<UserProvider>(context);
-    final curheartProvider = Provider.of<CurheartProvider>(context);
-
     return FutureBuilder(
-      future: getData(),
+      future: getuser,
       builder: (context, snapshot) {
         // ? WAITING
         if (snapshot.connectionState == ConnectionState.waiting) {
           return FullScreenLoading();
         }
 
+        final userModel = UserModel.fromSnapshot(snapshot.data!);
         // ? SUCCESS
         return Scaffold(
           drawer: Drawer(),
@@ -72,9 +65,10 @@ class _HomePageState extends State<HomePage> {
           // @ Refresher
           body: RefreshIndicator(
             onRefresh: refresh,
-            child: CustomScrollView(
+            child: NestedScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
               controller: scrollController,
-              slivers: [
+              headerSliverBuilder: (context, innerBoxIsScrolled) => [
                 // @ App Bar
                 SliverAppBar(
                   automaticallyImplyLeading: false,
@@ -105,8 +99,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                           image: DecorationImage(
                             fit: BoxFit.cover,
-                            image:
-                                NetworkImage(userProvider.userModel!.photoUrl),
+                            image: NetworkImage(userModel.photoUrl),
                           ),
                         ),
                       ),
@@ -114,37 +107,30 @@ class _HomePageState extends State<HomePage> {
                     SizedBox(width: 10),
                   ],
                 ),
-
-                // @ List Curheart
-                curheartProvider.allCurheart.isNotEmpty
-                    ? SliverPadding(
-                        padding: EdgeInsets.symmetric(horizontal: 20),
-                        sliver: SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                            childCount: curheartProvider.allCurheart.length,
-                            (context, index) {
-                              return Container(
-                                margin: EdgeInsets.only(bottom: 20),
-                                child: CureheartCard(
-                                  userModel: userProvider.userModel!,
-                                  curheartModel:
-                                      curheartProvider.allCurheart[index],
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      )
-                    : SliverToBoxAdapter(
-                        child: SizedBox(
-                          height: MediaQuery.sizeOf(context).height -
-                              kToolbarHeight,
-                          child: Center(
-                            child: Text("Belum ada curheart"),
-                          ),
-                        ),
-                      ),
               ],
+
+              // @ Body
+              body: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: FirestoreListView(
+                  shrinkWrap: true,
+                  primary: false,
+                  query: getAllCurheart,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, snapshot) {
+                    return CureheartCard(
+                      userModel: userModel,
+                      curheartModel: CurheartModel.fromSnapshot(snapshot),
+                    );
+                  },
+                  loadingBuilder: (context) => Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                  emptyBuilder: (context) => Center(
+                    child: Text("Kosong"),
+                  ),
+                ),
+              ),
             ),
           ),
           floatingActionButton: FloatingActionButton(
@@ -156,9 +142,7 @@ class _HomePageState extends State<HomePage> {
             onPressed: () {
               Navigator.push(
                 context,
-                CustomRoute(AddCurheart(
-                  userModel: userProvider.userModel!,
-                )),
+                CustomRoute(AddCurheart(userModel: userModel)),
               );
             },
           ),

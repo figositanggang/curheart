@@ -25,7 +25,7 @@ class UserModel {
     };
   }
 
-  factory UserModel.fromJson(DocumentSnapshot snapshot) {
+  factory UserModel.fromSnapshot(DocumentSnapshot snapshot) {
     final json = snapshot.data() as Map<String, dynamic>;
 
     return UserModel(
